@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Number_Conversion_Project
 {
@@ -86,37 +81,73 @@ namespace Number_Conversion_Project
                 case "A":
                     Console.WriteLine("Enter your binary number: ");
                     string aBinaryNumber = Console.ReadLine();
-                    binaryToDenary(aBinaryNumber);
+
+                    int aAnswer = 0;
+                    
+                    aAnswer = binaryToDenary(aBinaryNumber);
+                    Console.WriteLine("{0} in denary is {1}", aBinaryNumber, aAnswer);
+                    Console.ReadLine();
+                    
                     break;
 
                 case "B":
                     Console.WriteLine("Enter your denary value: ");
                     int bDenaryNumber = int.Parse(Console.ReadLine()); //converts the input from a string to an integer
-                    denaryToBinary(bDenaryNumber);
+
+                    string bAnswer = "";
+
+                    bAnswer = denaryToBinary(bDenaryNumber);
+                    Console.WriteLine("{0} in binary is {1}", bDenaryNumber, bAnswer);
+                    Console.ReadLine();
+
                     break;
 
                 case "C":
                     Console.WriteLine("Enter your binary number: ");
                     string cBinaryNumber = Console.ReadLine();
-                    binaryToHexadecimal(cBinaryNumber);
+
+                    string cAnswer = "";
+                    
+                    cAnswer = binaryToHexadecimal(cBinaryNumber);
+                    Console.WriteLine("{0} in hexadecimal is {1}", cBinaryNumber, cAnswer);
+                    Console.ReadLine();
+                    
                     break;
 
                 case "D":
                     Console.WriteLine("Enter your hexadecimal value: ");
                     string dHexNumber = Console.ReadLine();
-                    hexadecimalToBinary(dHexNumber);
+
+                    string dAnswer = "";
+                    
+                    dAnswer = hexadecimalToBinary(dHexNumber);
+                    Console.WriteLine("{0} in binary is {1}", dHexNumber, dAnswer);
+                    Console.ReadLine();
+
                     break;
 
                 case "E":
                     Console.WriteLine("Enter your denary value: ");
                     int eDenaryNumber = int.Parse(Console.ReadLine());
-                    denaryToHexadecimal(eDenaryNumber);
+
+                    string eAnswer = "";
+                    
+                    eAnswer = denaryToHexadecimal(eDenaryNumber);
+                    Console.WriteLine("{0} in hexadecimal is {1}", eDenaryNumber, eAnswer);
+                    Console.ReadLine();
+                    
                     break;
 
                 case "F":
                     Console.WriteLine("Enter your hexadecimal value: ");
                     string fHexNumber = Console.ReadLine();
-                    hexadimalToDenary(fHexNumber); 
+
+                    int fAnswer = 0;
+                    
+                    fAnswer = hexadimalToDenary(fHexNumber); 
+                    Console.WriteLine("{0} in denary is {1}", fHexNumber, fAnswer);
+                    Console.ReadLine();
+                    
                     break;
 
                 default:
@@ -133,17 +164,20 @@ namespace Number_Conversion_Project
 
         }
 
+        //subprogram converting from binary to denary
         static int binaryToDenary(string num)
         {
 
+            binaryNumberValidation(num);
+
             int denaryNum = 0;
-            for(int i = 0; i<8; i++)
+            for(int i = 7; i>0; i--) //iterates through each digit of the binary number
             {
 
-                if (num[8-(i+1)].ToString() == "1")
+                if (num[8-(i+1)].ToString() == "1") //checks if the bit is on and if it is, it converts that digit into denary and adds it to the denary number total
                 {
 
-                    denaryNum = denaryNum + 2 >> i;
+                    denaryNum = denaryNum + (2 >> (i-1));
 
                 }
 
@@ -152,16 +186,17 @@ namespace Number_Conversion_Project
             return denaryNum;
 
         }
+        //subprogram for denary to binary
         static string denaryToBinary(int num)
         {
 
-            denaryNumberValidation(num);
+            denaryNumberValidation(num); //validates that the denary number is within a working range
             int currentNum = num;
             string binaryNum = "";
-            for (int i = 7; i != 0; i--)
+            for (int i = 8; i != 0; i--)
             {
 
-                int test = currentNum - (2 >> i);
+                int test = currentNum - (Math.Pow(2, (i-1)));
                 if (test >= 0)
                 {
                     currentNum = test;
@@ -196,7 +231,7 @@ namespace Number_Conversion_Project
 
         }
 
-        static void hexadecimalToBinary(string num)
+        static string hexadecimalToBinary(string num)
         {
 
             hexadecimalValidation(num);
@@ -216,10 +251,13 @@ namespace Number_Conversion_Project
             binaryValue = nibble1 + nibble2;
 
 
+            return binaryValue;
+
         }
         static string denaryToHexadecimal(int num)
         {
-
+            denaryNumberValidation(num);
+            
             string binaryNum = "";
             string hexValue = "";
             
@@ -230,16 +268,61 @@ namespace Number_Conversion_Project
 
 
         }
-        static void hexadimalToDenary(string num)
+        static int hexadimalToDenary(string num)
         {
+            hexadecimalValidation(num);
+            
+            string binaryNum = "";
+            int denaryNum = 0;
 
+            binaryNum = hexadecimalToBinary(num);
+            denaryNum = binaryToDenary(binaryNum);
 
+            return denaryNum;
 
         }
         static void binaryAddition(string num1, string num2)
         {
 
+            int denaryNum1 = 0;
+            int denaryNum2 = 0;
+            int sum = 0;
 
+            binaryNumberValidation(num1);
+            binaryNumberValidation(num2);
+
+            denaryNum1 = binaryToDenary(num1);
+            denaryNum2 = binaryToDenary(num2);
+
+            sum = denaryNum1 + denaryNum2;
+            if (sum > 255)
+            {
+                string binaryAnswer = "";
+
+                Console.WriteLine("There is an overflow in your calculation.");
+                Console.WriteLine("The denary value of your binary addition is: {0}", sum);
+
+                sum = sum - 255;
+                
+                binaryAnswer = denaryToBinary(sum);
+
+                Console.WriteLine("The binary value of your binary addition is (1){0}", binaryAnswer);
+                Console.ReadLine();
+
+            }
+
+            else
+            {
+
+                string binaryAnswer = "";
+
+                binaryAnswer = denaryToBinary(sum);
+                
+                Console.WriteLine("The denary value of your binary addition is: {0}", sum);
+                Console.WriteLine("The binary value of your binary addition is (1){0}", binaryAnswer);
+                Console.ReadLine();
+
+            }
 
         }
 
@@ -255,7 +338,7 @@ namespace Number_Conversion_Project
                     Console.WriteLine("Number too small,has to be a number between 0 to 255, re-enter choice: ");
                     num = int.Parse(Console.ReadLine());
                 }
-                else if (num > 0)
+                else if (num > 255)
                 {
                     Console.WriteLine("Number too big,has to be a number between 0 to 255, re-enter choice: ");
                     num = int.Parse(Console.ReadLine());
